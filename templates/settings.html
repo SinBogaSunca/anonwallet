@@ -1,0 +1,116 @@
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                {{.i18n.Tr "settingsTitle"}}
+                <small>{{.i18n.Tr "settingsSubtitle"}}</small>
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content" id="content">
+
+{{ if not .User.ReceivedFreeAnote }}
+            <div class="callout callout-danger">
+                <h4>{{.i18n.Tr "telegramTitle"}}</h4>
+                <p>{{.i18n.Tr "telegramMessage"}} <a href="{{.i18n.Tr "homeLink"}}/airdrop/" target="_blank"><strong>{{.i18n.Tr "telegramHere"}}</strong></a>!</p>
+            </div>
+{{ end }}
+
+{{ if .Flash.SuccessMsg }}
+            <div class="callout callout-success">
+                <h4>{{.i18n.Tr "success"}}</h4>
+                <p>{{ .Flash.SuccessMsg }}</p>
+            </div>
+{{ end }}
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <!-- Default box -->
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <i class="fa fa-globe"></i>
+                            <h3 class="box-title">{{.i18n.Tr "anonutopia"}}</h3>
+                        </div>
+{{ if .User.HasBadges }}
+                        <div class="box-body">
+                            <p><strong>Anonutopia Badges</strong></p>
+                            <p>
+{{ range .User.Badges }}
+                                <small class="label bg-green" style="text-transform: capitalize;"><i class="fa fa-tag"></i>&nbsp;&nbsp;{{ .Name }}</small>
+{{ end }}
+                            </p>
+                        </div>
+{{ else }}
+                        <form action="javascript:;" id="applicationForm">
+                            <div class="box-body">
+                                <div class="form-group" id="emailGroup">
+                                    <label for="email">{{.i18n.Tr "email"}}</label>
+                                    <input type="text" class="form-control input-lg" id="email" placeholder="anon@anonutopia.com" name="email" value="{{ .User.Email }}">
+                                </div>
+                                <div class="form-group" id="nicknameGroup">
+                                    <label for="nickname">{{.i18n.Tr "nick"}}</label>
+                                    <input type="text" class="form-control input-lg" id="nickname" placeholder="Anonymous" name="nickname" value="{{ .User.Nickname }}">
+                                </div>
+                                <div class="form-group" id="countryGroup">
+                                    <label for="nickname">{{.i18n.Tr "country"}}</label>
+                                    <!-- <input type="text" class="form-control input-lg" id="country" placeholder="Anonutopia"> -->
+                                    <select class="form-control input-lg" id="country" name="country"></select>
+                                </div>
+                                <div class="form-group" id="cityGroup">
+                                    <label for="nickname">{{.i18n.Tr "city"}}</label>
+                                    <select class="form-control input-lg" id="city" name="city">
+                                        <option>City</option>
+                                    </select>
+                                </div>
+                                <p class="text-red" style="margin: 0; display: none;" id="errorMessageNickname"></p>
+{{ if not .UserHasAnotes }}
+                                <p class="text-red" style="margin-bottom: 0; margin-top: 10px;">{{.i18n.Tr "needToHold"}}</p>
+{{ end }}
+                            </div>
+                            <input type="hidden" name="countryHidden" id="countryHidden" value="{{ .User.Country }}">
+                            <input type="hidden" name="cityHidden" id="cityHidden" value="{{ .User.City }}">
+                            <div class="box-footer">
+                                <input type="submit" value="{{.i18n.Tr "apply"}}" class="btn btn-lg btn-success btn-block" id="saveButton">
+                            </div>
+                        </form>
+                        <div class="box-body" style="display: none;" id="applicationSuccess">
+                            <p class="text-green" style="margin: 0;">{{.i18n.Tr "applicationSuccess"}}</p>
+                        </div>
+{{ end }}
+                    </div>
+                    <!-- /.box -->
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Default box -->
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <i class="fa fa-user-secret"></i>
+                            <h3 class="box-title">Backup</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group" id="nicknameGroup">
+                                <label for="nickname">Seed</label>
+                                <textarea id="seed" rows="3" class="form-control input-lg" readonly>{{.i18n.Tr "seedHidden"}}</textarea>
+                                <!-- <input type="text" class="form-control input-lg" id="seed" value="{{.i18n.Tr "seedHidden"}}" readonly> -->
+                            </div>
+                            <p class="text-green" id="copymessageseed" style="display: none;">{{.i18n.Tr "seedCopied"}}</p>
+                        </div>
+                        <div class="box-footer">
+                            <!-- <input type="submit" value="{{.i18n.Tr "showSeed"}}" class="btn btn-lg btn-danger" id="saveButton"> -->
+                            <button id="showSeed" class="btn btn-lg btn-danger">{{.i18n.Tr "showSeed"}}</button>
+                            <button id="copySeed" class="btn btn-lg btn-default pull-right" disabled onclick="wallet.copy('seed');">{{.i18n.Tr "copySeed"}}</button>
+                        </div>
+                    </div>
+                    <!-- /.box -->
+                </div>
+
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->

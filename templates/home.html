@@ -24,6 +24,13 @@
 
         <!-- Main content -->
         <section class="content" id="content" style="display: none;">
+{{ if not .User.ReceivedFreeAnote }}
+            <div class="callout callout-danger">
+                <h4>{{.i18n.Tr "telegramTitle"}}</h4>
+                <p>{{.i18n.Tr "telegramMessage"}} <a href="{{.i18n.Tr "homeLink"}}/airdrop/" target="_blank"><strong>{{.i18n.Tr "telegramHere"}}</strong></a>!</p>
+            </div>
+{{ end }}
+
             <div class="callout callout-danger" id="transactionError" style="display: none;">
                 <h4>{{.i18n.Tr "transactionErr"}}</h4>
                 <p>{{.i18n.Tr "transactionErrMsg"}}</p>
@@ -43,7 +50,7 @@
                             <li class="active"><a href="#tab_1" data-toggle="tab"><i class="fa fa-arrow-down"></i> {{.i18n.Tr "paymentIn"}}</a></li>
                             <li><a href="#tab_2" data-toggle="tab">Bitcoin</a></li>
                             <li><a href="#tab_3" data-toggle="tab">Ether</a></li>
-                            <li><a href="#tab_4" data-toggle="tab">Banka</a></li>
+                            <li><a href="#tab_4" data-toggle="tab">{{.i18n.Tr "bank"}}</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_1">
@@ -53,8 +60,8 @@
                                 <p class="text-green" id="copymessageaddress" style="display: none;">{{.i18n.Tr "addressCopied"}}</p>
                                 <p>
                                     <div class="input-group">
-                                            <input type="text" class="form-control input-lg" id="address" value="3PDb1ULFjazuzPeWkF2vqd1nomKh4ctq9y2" readonly>
-                                            <div class="input-group-addon"><a href="javascript:wallet.copy('address');"><i class="fa fa-copy fa-lg"></i></a></div>
+                                            <input type="text" class="form-control input-lg" id="address" value="{{ .NodeAddress }}" readonly>
+                                            <div class="input-group-addon"><a href="javascript:;" onclick="wallet.copy('address');"><i class="fa fa-copy fa-lg"></i></a></div>
                                     </div>
                                 </p>
                             </div>
@@ -67,7 +74,7 @@
                                 <p>
                                     <div class="input-group">
                                             <input type="text" class="form-control input-lg" id="addressBitcoin" value="{{ .User.BitcoinAddr }}" readonly>
-                                            <div class="input-group-addon"><a href="javascript:wallet.copy('addressBitcoin');"><i class="fa fa-copy fa-lg"></i></a></div>
+                                            <div class="input-group-addon"><a href="javascript:;" onclick="wallet.copy('addressBitcoin');"><i class="fa fa-copy fa-lg"></i></a></div>
                                     </div>
                                 </p>
                             </div>
@@ -80,7 +87,7 @@
                                 <p>
                                     <div class="input-group">
                                             <input type="text" class="form-control input-lg" id="addressEthereum" value="{{ .User.EtherAddr }}" readonly>
-                                            <div class="input-group-addon"><a href="javascript:wallet.copy('addressEthereum');"><i class="fa fa-copy fa-lg"></i></a></div>
+                                            <div class="input-group-addon"><a href="javascript:;" onclick="wallet.copy('addressEthereum');"><i class="fa fa-copy fa-lg"></i></a></div>
                                     </div>
                                 </p>
                             </div>
@@ -134,7 +141,7 @@
                                         <td><span class="badge bg-green">0.213 BTC</span></td>
                                     </tr> -->
                                     <tr>
-                                        <td>Kuna (HRK)</td>
+                                        <td>{{.i18n.Tr "mainCurrency"}}</td>
                                         <td><span class="badge bg-red">{{.i18n.Tr "soon"}}</span></td>
                                     </tr>
                                     <tr>
@@ -164,7 +171,7 @@
                                     <div class="box-body">
                                         <div class="form-group">
                                             <label for="exampleInputFile" class="text-lg-left">{{.i18n.Tr "currency2"}}</label>
-                                            <select class="form-control input-lg" id="paymentCurrency">
+                                            <select class="form-control input-lg" id="paymentCurrency" onchange="document.getElementById('payFeeCurrency').selectedIndex = this.selectedIndex;">
                                                 <option value="ANT" selected>ANOTE (ANO)</option>
                                                 <option value="WAV">Waves (WAV)</option>
                                                 <option value="WAV">Bitcoin (BTC)</option>
@@ -174,7 +181,7 @@
                                         </div>
                                         <div class="form-group" id="addressToGroup">
                                             <label for="addressTo">{{.i18n.Tr "addressTo"}}</label>
-                                            <input type="text" class="form-control input-lg" id="addressTo" placeholder="3PDb1ULFjazuzPeWkF2vqd1nomKh4ctq9y2">
+                                            <input type="text" class="form-control input-lg" id="addressTo" placeholder="{{ .NodeAddress }}">
                                         </div>
                                         <div class="form-group" id="amountGroup">
                                             <label for="amount">{{.i18n.Tr "amount"}}</label>
@@ -184,6 +191,7 @@
                                     </div>
                                     <div class="box-footer">
                                         <input type="submit" value="{{.i18n.Tr "pay"}}" class="btn btn-block btn-lg btn-danger" id="payButton">
+                                        <!-- <button type="button" class="btn btn-block btn-lg btn-danger" data-toggle="modal" data-target="#modal-default"></button> -->
                                     </div>
                                 </form>
                             </div>
@@ -197,3 +205,37 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    <div class="modal fade" id="modalPay">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">{{.i18n.Tr "payConfirm"}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>{{.i18n.Tr "payConfirmMessage"}}</p>
+                <p style="margin-bottom: 0px;"><a href="javascript:;" onclick="$('#payAdvanced').fadeToggle();">{{.i18n.Tr "configureFee"}}</a></p>
+                <div class="form-group" id="payAdvanced" style="display: none; margin: 10px 0 0 0;">
+                    <label>{{.i18n.Tr "feeCurrency"}}</label>
+                    <select class="form-control" id="payFeeCurrency">
+                      <option>Anote (0.3 ANO)</option>
+                      <option>Waves (0.001 WAV)</option>
+                      <option>Bitcoin (0.0000004 BTC)</option>
+                      <option>Ether (0.000008 ETH)</option>
+                    </select>
+                </div>
+                <p style="margin-top: 10px; display: none;" id="outPayMsgBtc">{{.i18n.Tr "outPayMsgBtc"}}</p>
+                <p style="margin-top: 10px; display: none;" id="outPayMsgEth">{{.i18n.Tr "outPayMsgEth"}}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{.i18n.Tr "cancel"}}</button>
+              <button type="button" class="btn btn-danger" id="payConfirmButton">{{.i18n.Tr "pay"}}</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->    

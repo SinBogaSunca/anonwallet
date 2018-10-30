@@ -1,6 +1,6 @@
 <div class="login-box">
     <div class="login-logo">
-        <img src="/dist/img/logo.png" alt="Kriptokuna Logo" style="width: 270px;">
+        <img src="{{.i18n.Tr "logo"}}" alt="Anonutopia Logo" style="width: 270px;">
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -33,6 +33,9 @@
                     <a href="javascript:;" id="importnext" class="btn btn-success btn-block btn-flat btn-lg">{{.i18n.Tr "next"}}</a>
                 </div>
                 <div class="clearfix"></div>
+            </div>
+            <div id="newGroupAjax" style="display: none;">
+                <p class="text-center"><img src="/dist/img/ajax-loader.gif" alt="Ajax Loader"></p>
             </div>
         </form>
 

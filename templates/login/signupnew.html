@@ -1,6 +1,6 @@
 <div class="login-box">
     <div class="login-logo">
-        <img src="/dist/img/logo.png" alt="Kriptokuna Logo" style="width: 270px;">
+        <img src="{{.i18n.Tr "logo"}}" alt="Anonutopia Logo" style="width: 270px;">
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -19,7 +19,7 @@
                 </div>
                 <p class="text-red" style="display: none;" id="errorMessagePassword"></p>
                 <div class="pull-right">
-                    <button type="submit" id="signupnext2" class="btn btn-success btn-block btn-flat btn-lg">{{.i18n.Tr "finish"}}</button>
+                    <button type="submit" class="btn btn-success btn-block btn-flat btn-lg">{{.i18n.Tr "finish"}}</button>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -44,7 +44,7 @@
                         <a href="javascript:;" id="signupcopy" class="btn btn-primary btn-block btn-flat btn-lg">{{.i18n.Tr "copy"}}</a>
                     </div>
                     <div class="col-xs-2">
-                        <p class="text-center" style="margin: 12px 0;">i</p>
+                        <p class="text-center" style="margin: 12px 0;">{{.i18n.Tr "and"}}</p>
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-5">
@@ -52,6 +52,9 @@
                     </div>
                     <!-- /.col -->
                 </div>
+            </div>
+            <div id="newGroupAjax" style="display: none;">
+                <p class="text-center"><img src="/dist/img/ajax-loader.gif" alt="Ajax Loader"></p>
             </div>
         </form>
 

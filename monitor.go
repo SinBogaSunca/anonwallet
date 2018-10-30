@@ -29,9 +29,18 @@ func (b *BitcoinAddressMonitor) checkAddresses() {
 
 	for _, u := range users {
 		balance := b.checkAddressesRequest(u.BitcoinAddr)
-		amountNew := balance - u.BitcoinBalanceProcessed
-		if amountNew > 100000 {
-			u.BitcoinBalanceNew = amountNew
+		if balance > 0 {
+			u.BitcoinBalanceNew = balance
+
+			ua := &UsedAddress{Address: u.BitcoinAddr, Type: 1, UserID: int(u.ID), Balance: uint64(balance)}
+			db.Create(ua)
+
+			var err error
+			u.BitcoinAddr, err = bg.getAddress()
+			if err != nil {
+				log.Printf("Error in bg.getAddress: %s", err)
+			}
+
 			db.Save(u)
 		}
 	}
@@ -42,31 +51,13 @@ func (b *BitcoinAddressMonitor) checkAddressesRequest(address string) int {
 		return 0
 	}
 
-	cl := http.Client{}
-
-	url := fmt.Sprintf("https://blockchain.info/q/addressbalance/%s?confirmations=1", address)
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	balance, err := bg.getBalance(address)
 	if err != nil {
-		log.Printf("[BitcoinAddressMonitor.checkAdressesRequest] request err %s", err)
+		log.Printf("Error in BitcoinAddressMonitor.checkAddressRequest: %s", err)
 		return 0
 	}
 
-	res, err := cl.Do(req)
-	if err != nil {
-		log.Printf("[BitcoinAddressMonitor.checkAdressesRequest] request do err %s", err)
-		return 0
-	}
-	body, _ := ioutil.ReadAll(res.Body)
-
-	balance, err := strconv.Atoi(string(body))
-	if err == nil {
-		return balance
-	} else {
-		log.Printf("[BitcoinAddressMonitor.checkAdressesRequest] strconv err: %s", err)
-	}
-
-	return 0
+	return int(balance * 100000000)
 }
 
 func initBaMonitor() *BitcoinAddressMonitor {
@@ -94,9 +85,18 @@ func (e *EthereumAddressMonitor) checkAddresses() {
 
 	for _, u := range users {
 		balance := e.checkAddressesRequest(u.EtherAddr)
-		amountNew := balance - u.EtherBalanceProcessed
-		if amountNew > 100000 {
-			u.EtherBalanceNew = amountNew
+		if balance > 0 {
+			u.EtherBalanceNew = balance
+
+			ua := &UsedAddress{Address: u.EtherAddr, Type: 2, UserID: int(u.ID), Balance: uint64(balance)}
+			db.Create(ua)
+
+			var err error
+			u.EtherAddr, err = eg.getAddress(uint32(u.ID))
+			if err != nil {
+				log.Printf("Error in eg.getAddress: %s", err)
+			}
+
 			db.Save(u)
 		}
 	}
